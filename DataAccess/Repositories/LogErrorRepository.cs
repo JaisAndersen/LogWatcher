@@ -1,16 +1,36 @@
-﻿using DataAccess.Models;
+﻿using DataAccess.Infrastructure;
+using DataAccess.Models;
 using DataAccess.Repositories.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DataAccess.Repositories
 {
-    internal class LogErrorRepository : ILogErrorRepository
+    public class LogErrorRepository : ILogErrorRepository
     {
-        public Task AddAsync(LogError logError)
+        private readonly LogWatcherContext _context;
+
+        public LogErrorRepository(LogWatcherContext context)
         {
-            throw new NotImplementedException();
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+        }
+
+        public async Task AddAsync(LogError logError)
+        {
+            ArgumentNullException.ThrowIfNull(logError);
+
+            if (logError.Id == Guid.Empty)
+            {
+                logError.Id = Guid.NewGuid();
+            }
+
+            var utcNow = DateTime.UtcNow;
+            if (logError.Created == default)
+            { 
+                logError.Created = utcNow;
+                logError.Updated = utcNow;
+            }
+
+            await _context.LogErrors.AddAsync(logError);
+            await _context.SaveChangesAsync();
         }
     }
 }
