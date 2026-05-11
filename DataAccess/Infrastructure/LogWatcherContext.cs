@@ -9,7 +9,7 @@ namespace DataAccess.Infrastructure
         {
         }
 
-        public DbSet<LogFile> Logfiles => Set<LogFile>();
+        public DbSet<LogFile> LogFiles => Set<LogFile>();
         public DbSet<LogError> LogErrors => Set<LogError>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

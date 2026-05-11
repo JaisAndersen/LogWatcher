@@ -13,23 +13,22 @@ namespace DataAccess.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddAsync(LogError logError)
+        public async Task AddRangeAsync(IEnumerable<LogError> errors)
         {
-            ArgumentNullException.ThrowIfNull(logError);
-
-            if (logError.Id == Guid.Empty)
-            {
-                logError.Id = Guid.NewGuid();
-            }
+            var list = errors.ToList();
+            if (list.Count == 0) return;
 
             var utcNow = DateTime.UtcNow;
-            if (logError.Created == default)
-            { 
-                logError.Created = utcNow;
-                logError.Updated = utcNow;
+            foreach (var error in list)
+            {
+                if (error.Id == Guid.Empty)
+                    error.Id = Guid.NewGuid();
+
+                if (error.Created == default)
+                    error.Created = utcNow;
             }
 
-            await _context.LogErrors.AddAsync(logError);
+            await _context.LogErrors.AddRangeAsync(list);
             await _context.SaveChangesAsync();
         }
     }
