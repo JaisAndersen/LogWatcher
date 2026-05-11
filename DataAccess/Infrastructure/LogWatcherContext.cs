@@ -1,9 +1,5 @@
 ﻿using DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Reflection.Emit;
-using System.Text;
 
 namespace DataAccess.Infrastructure
 {
@@ -20,8 +16,8 @@ namespace DataAccess.Infrastructure
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.FilePath).IsRequired();
-                entity.Property(e => e.Created).HasDefaultValueSql("sysutcdatetime())");
-                entity.Property(e => e.Updated).HasDefaultValueSql("sysutcdatetime())");
+                entity.Property(e => e.Created).HasDefaultValueSql("sysutcdatetime()");
+                entity.Property(e => e.Updated).HasDefaultValueSql("sysutcdatetime()");
             });
         }
     }

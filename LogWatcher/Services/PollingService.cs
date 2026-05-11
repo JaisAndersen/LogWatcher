@@ -1,7 +1,5 @@
 using DataAccess.Models;
 using DataAccess.Repositories.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
-using System.IO;
 
 namespace LogWatcher.Services
 {
@@ -10,11 +8,13 @@ namespace LogWatcher.Services
         private readonly ILogger<LogPollingService> _logger;
         private readonly TimeSpan _interval = TimeSpan.FromSeconds(60);
         private readonly IServiceProvider _services;
+        private readonly string _logPath;
 
-        public LogPollingService(ILogger<LogPollingService> logger, IServiceProvider services)
+        public LogPollingService(ILogger<LogPollingService> logger, IServiceProvider services, IConfiguration configuration)
         {
             _logger = logger;
             _services = services;
+            _logPath = configuration["LogWatcher:LogPath"] ?? throw new InvalidOperationException("LogWatcher:LogPath is not configured.");
         }
 
         protected override async Task ExecuteAsync(CancellationToken ct)
@@ -28,31 +28,31 @@ namespace LogWatcher.Services
 
         private async Task PollAllLogsAsync()
         {
-            string path = @"C:\sites\hk\Data\logs";
             string[] files;
             try
             {
-                files = Directory.GetFiles(path, "*.txt", SearchOption.AllDirectories);
+                files = Directory.GetFiles(_logPath, "*.txt", SearchOption.AllDirectories);
             }
             catch (Exception ex)
             {
-                _logger.LogWarning("Failed to enumerate files in {path}: {msg}", path, ex.Message);
+                _logger.LogWarning("Failed to enumerate files in {Path}: {Message}", _logPath, ex.Message);
                 return;
             }
+
+            using var scope = _services.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<ILogErrorRepository>();
 
             foreach (var file in files)
             {
                 try
                 {
-                    _logger.LogInformation("Polling {file}...", file);
-                    using var scope = _services.CreateScope();
-                    var repo = scope.ServiceProvider.GetRequiredService<ILogErrorRepository>();
+                    _logger.LogInformation("Polling {File}...", file);
                     var logError = new LogError { FilePath = file };
                     await repo.AddAsync(logError);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning("Couldn't process {file}: {msg}", file, ex.Message);
+                    _logger.LogWarning("Couldn't process {File}: {Message}", file, ex.Message);
                 }
             }
         }
