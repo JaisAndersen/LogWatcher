@@ -8,7 +8,7 @@ namespace LogWatcher.Services
         {
             var lines = new List<string>();
 
-            using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             stream.Seek(fromOffset, SeekOrigin.Begin);
 
             using var reader = new StreamReader(stream);
