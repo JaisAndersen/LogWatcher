@@ -8,7 +8,7 @@
         public string Level { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
         public string? StackTrace { get; set; }
-        public DateTime OccuredAt { get; set; }
+        public DateTime OccurredAt { get; set; }
         public DateTime Created { get; set; }
     }
 }
