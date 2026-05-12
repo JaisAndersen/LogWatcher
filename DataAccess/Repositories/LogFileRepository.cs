@@ -2,9 +2,6 @@
 using DataAccess.Models;
 using DataAccess.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DataAccess.Repositories
 {

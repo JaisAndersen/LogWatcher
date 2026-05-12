@@ -6,7 +6,8 @@ namespace LogWatcher.Services
 {
     public partial class SitecoreLogParser : ILogParser
     {
-        private static readonly string[] ErrorLevels = new[] { "DEBUG", "INFO", "WARN", "ERROR", "FATAL" };
+        // Sitecore logs have levels: DEBUG, INFO, WARN, ERROR, FATAL. We only care about errors and above.
+        private static readonly string[] ErrorLevels = new[] { "DEBUG", "WARN", "ERROR", "FATAL" };
         // Matches: <thread> <HH:mm:ss> <LEVEL>  <message>
         [GeneratedRegex(@"^.+?\s(\d{2}:\d{2}:\d{2})\s(DEBUG|INFO|WARN|ERROR|FATAL)\s{1,2}(.+)$")]
         private static partial Regex EntryPattern();

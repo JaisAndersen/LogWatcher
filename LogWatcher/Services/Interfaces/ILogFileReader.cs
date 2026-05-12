@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace LogWatcher.Services.Interfaces
+﻿namespace LogWatcher.Services.Interfaces
 {
     public interface ILogFileReader
     {

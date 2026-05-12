@@ -7,7 +7,7 @@ namespace LogWatcher.Services
     public class LogPollingService : BackgroundService
     {
         private readonly ILogger<LogPollingService> _logger;
-        private readonly TimeSpan _interval = TimeSpan.FromSeconds(60);
+        private readonly TimeSpan _interval = TimeSpan.FromSeconds(10);
         private readonly IServiceProvider _services;
         private readonly ILogFileReader _fileReader;
         private readonly ILogParser _parser;
