@@ -6,6 +6,6 @@
         public string FilePath { get; set; } = string.Empty;
         public long ByteOffset { get; set; }
         public DateTime LastPolled { get; set; }
-        public ICollection<LogError> Errors { get; set; } = new List<LogError>();
+        public ICollection<LogError> Errors { get; set; } = [];
     }
 }

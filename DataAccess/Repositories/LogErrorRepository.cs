@@ -31,5 +31,16 @@ namespace DataAccess.Repositories
             await _context.LogErrors.AddRangeAsync(list);
             await _context.SaveChangesAsync();
         }
+
+        public Task<PagedResult<LogError>> GetAsync(LogErrorQuery query)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public Task AcknowledgeAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

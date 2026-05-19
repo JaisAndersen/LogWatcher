@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DataAccess.Models
+﻿namespace DataAccess.Models
 {
-    public class PagesResult<T>
+    public class PagedResult<T>
     {
-        public List<T> Items { get; set; } new();
+        public List<T> Items { get; set; } = [];
         public int TotalCount { get; set; }
         public int Paged { get; set; }
         public int PageSize { get; set; }
