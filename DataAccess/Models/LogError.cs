@@ -10,5 +10,6 @@
         public string? StackTrace { get; set; }
         public DateTime OccurredAt { get; set; }
         public DateTime Created { get; set; }
+        public bool IsAcknowledged { get; set; } = false;
     }
 }

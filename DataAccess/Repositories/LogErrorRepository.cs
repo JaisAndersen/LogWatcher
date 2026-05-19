@@ -1,6 +1,7 @@
 ﻿using DataAccess.Infrastructure;
 using DataAccess.Models;
 using DataAccess.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Repositories
 {
@@ -32,15 +33,38 @@ namespace DataAccess.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public Task<PagedResult<LogError>> GetAsync(LogErrorQuery query)
+        public async Task<PagedResult<LogError>> GetAsync(LogErrorQuery query)
         {
-            throw new NotImplementedException();
+            var q = _context.LogErrors.AsQueryable();
+
+            if (query.From.HasValue)
+                q = q.Where(e => e.Created >= query.From.Value);
+
+            if (query.To.HasValue)
+                q = q.Where(e => e.Created <= query.To.Value);
+
+            var totalCount = await q.CountAsync();
+
+            var items = await q
+                .OrderByDescending(e => e.Created)
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ToListAsync();
+
+            return new PagedResult<LogError>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                Page = query.Page,
+                PageSize = query.PageSize
+            };
         }
 
-
-        public Task AcknowledgeAsync(Guid id)
+        public async Task AcknowledgeAsync(Guid id)
         {
-            throw new NotImplementedException();
+            await _context.LogErrors
+                .Where(e => e.Id == id)
+                .ExecuteUpdateAsync(e => e.SetProperty(x => x.IsAcknowledged, true));
         }
     }
 }
