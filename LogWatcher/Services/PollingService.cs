@@ -24,7 +24,7 @@ namespace LogWatcher.Services
             _services = services;
             _fileReader = fileReader;
             _parser = parser;
-            _logPath = configuration["LogWatcher:TestLogPath"]
+            _logPath = configuration["LogWatcher:LogPath"]
                 ?? throw new InvalidOperationException("LogWatcher:TestLogPath is not configured.");
         }
 

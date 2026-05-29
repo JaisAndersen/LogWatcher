@@ -16,6 +16,7 @@ namespace DataAccess.Infrastructure
         {
             modelBuilder.Entity<LogFile>(entity =>
             {
+                  entity.ToTable("LogFile");
                   entity.HasKey(e => e.Id);
                   entity.Property(e => e.FilePath).IsRequired();
                   entity.HasIndex(e => e.FilePath).IsUnique();
@@ -26,6 +27,7 @@ namespace DataAccess.Infrastructure
 
             modelBuilder.Entity<LogError>(entity =>
             {
+                entity.ToTable("LogError");
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Level).IsRequired();
                 entity.Property(e => e.Message).IsRequired();

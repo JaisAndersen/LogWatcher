@@ -8,8 +8,8 @@
         public string Level { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
         public string? StackTrace { get; set; }
+        public bool Acknowledged { get; set; } = false;
         public DateTime OccurredAt { get; set; }
-        public DateTime Created { get; set; }
-        public bool IsAcknowledged { get; set; } = false;
+        public DateTime Created { get; set; }        
     }
 }
