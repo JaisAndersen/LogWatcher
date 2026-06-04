@@ -19,7 +19,7 @@ namespace LogWatcher.Controllers
         public async Task<ActionResult<PagedResult<LogError>>> Get([FromQuery] LogErrorQuery query)
         {
             if (query.From.HasValue && query.To.HasValue && query.From > query.To)
-                return BadRequest("From has to be before To");
+                return BadRequest("The from date has to be before the to date");
 
             var result = await _repository.GetAsync(query);
             return Ok(result);
