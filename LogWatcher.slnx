@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="DataAccess/DataAccess.csproj" />
   <Project Path="LogWatcher.Tests/LogWatcher.Tests.csproj" />
+  <Project Path="LogWatcher.Web/LogWatcher.Web.csproj" Id="43dbad0b-27ef-4e5c-9f32-2ff1fbf23f38" />
   <Project Path="LogWatcher/LogWatcher.csproj" />
 </Solution>

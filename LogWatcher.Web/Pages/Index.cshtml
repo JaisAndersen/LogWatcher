@@ -1,0 +1,27 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<h1>Log Errors</h1>
+
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>Tidspunkt</th>
+            <th>Level</th>
+            <th>Besked</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var error in Model.Errors.Items)
+        {
+            <tr>
+                <td>@error.OccurredAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@error.Level</td>
+                <td>@error.Message</td>
+            </tr>
+        }
+    </tbody>
+</table>
