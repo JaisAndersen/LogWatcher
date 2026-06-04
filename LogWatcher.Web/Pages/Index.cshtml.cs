@@ -14,9 +14,20 @@ namespace LogWatcher.Web.Pages
             _repository = repository;
         }
         public PagedResult<LogError> Errors { get; set; } = new();
+
+        [BindProperty(SupportsGet = true)]
+        public DateTime? From { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public DateTime? To { get; set; }
+
         public async Task OnGetAsync()
         {
-            Errors = await _repository.GetAsync(new LogErrorQuery());
+            Errors = await _repository.GetAsync(new LogErrorQuery
+            {
+                From = From,
+                To = To
+            });
         }
     }
 }

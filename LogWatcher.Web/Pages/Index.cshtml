@@ -1,10 +1,29 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "LogWatcher";
 }
 
 <h1>Log Errors</h1>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <label class="form-label">Fra</label>
+        <input type="datetime-local" name="From"
+               value="@Model.From?.ToString("yyyy-MM-ddTHH:mm")"
+               class="form-control" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Til</label>
+        <input type="datetime-local" name="To"
+               value="@Model.To?.ToString("yyyy-MM-ddTHH:mm")"
+               class="form-control" />
+    </div>
+    <div class="col-auto align-self-end">
+        <button type="submit" class="btn btn-primary">Filtrer</button>
+        <a href="/" class="btn btn-secondary">Nulstil</a>
+    </div>
+</form>
 
 <table class="table table-sm">
     <thead>
