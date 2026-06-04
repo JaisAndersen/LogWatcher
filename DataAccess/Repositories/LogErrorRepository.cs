@@ -38,10 +38,10 @@ namespace DataAccess.Repositories
             var q = _context.LogErrors.AsQueryable();
 
             if (query.From.HasValue)
-                q = q.Where(e => e.Created >= query.From.Value);
+                q = q.Where(e => e.OccurredAt >= query.From.Value);
 
             if (query.To.HasValue)
-                q = q.Where(e => e.Created <= query.To.Value);
+                q = q.Where(e => e.OccurredAt <= query.To.Value);
 
             var totalCount = await q.CountAsync();
 

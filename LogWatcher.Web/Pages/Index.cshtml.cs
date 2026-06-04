@@ -21,12 +21,17 @@ namespace LogWatcher.Web.Pages
         [BindProperty(SupportsGet = true)]
         public DateTime? To { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public int CurrentPage { get; set; } = 1;
+
         public async Task OnGetAsync()
         {
             Errors = await _repository.GetAsync(new LogErrorQuery
             {
                 From = From,
-                To = To
+                To = To,
+                Page = CurrentPage,
+                PageSize = 10
             });
         }
     }

@@ -44,3 +44,19 @@
         }
     </tbody>
 </table>
+@if (Model.Errors.TotalPages > 1)
+{
+    var fromStr = Model.From?.ToString("yyyy-MM-ddTHH:mm");
+    var toStr = Model.To?.ToString("yyyy-MM-ddTHH:mm");
+
+    <nav>
+        <ul class="pagination">
+            @for (int p = 1; p <= Model.Errors.TotalPages; p++)
+            {
+                <li class="page-item @(p == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="?CurrentPage=@p&From=@fromStr&To=@toStr">@p</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
