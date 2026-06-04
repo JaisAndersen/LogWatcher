@@ -26,6 +26,12 @@ namespace LogWatcher.Web.Pages
 
         public async Task OnGetAsync()
         {
+            if (From.HasValue && To.HasValue && From > To)
+            {
+                ModelState.AddModelError(nameof(From), "Fra-dato skal være før til-dato");
+                return;
+            }
+
             Errors = await _repository.GetAsync(new LogErrorQuery
             {
                 From = From,
@@ -33,6 +39,11 @@ namespace LogWatcher.Web.Pages
                 Page = CurrentPage,
                 PageSize = 10
             });
+        }
+        public async Task<IActionResult> OnPostAcknowledgeAsync(Guid id)
+        {
+            await _repository.AcknowledgeAsync(id);
+            return new JsonResult(new { success = true });
         }
     }
 }

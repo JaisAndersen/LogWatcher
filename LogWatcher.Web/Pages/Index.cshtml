@@ -5,6 +5,7 @@
 }
 
 <h1>Log Errors</h1>
+@Html.AntiForgeryToken()
 
 <form method="get" class="row g-2 mb-3">
     <div class="col-auto">
@@ -25,12 +26,24 @@
     </div>
 </form>
 
-<table class="table table-sm">
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger mt-2">
+        @Html.ValidationMessageFor(m => m.From)
+    </div>
+}
+
+<p class="text-muted small">
+    Viser @Model.Errors.Items.Count af @Model.Errors.TotalCount fejl
+</p>
+
+<table class="table table-sm table-hover table-striped">
     <thead>
         <tr>
             <th>Tidspunkt</th>
             <th>Level</th>
             <th>Besked</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -38,8 +51,25 @@
         {
             <tr>
                 <td>@error.OccurredAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                <td>@error.Level</td>
+                <td>
+                    <span class="badge @(error.Level == "ERROR" ? "bg-danger" : "bg-warning text-dark")">
+                        @error.Level
+                    </span>
+                </td>
                 <td>@error.Message</td>
+                <td>
+                    @if (!error.Acknowledged)
+                    {
+                        <button class="btn btn-sm btn-outline-success"
+                                onclick="acknowledge('@error.Id', this)">
+                            Acknowledge
+                        </button>
+                    }
+                    else
+                    {
+                        <span class="text-muted small">Acknowledged</span>
+                    }
+                </td>
             </tr>
         }
     </tbody>
@@ -59,4 +89,20 @@
             }
         </ul>
     </nav>
+}
+
+@section Scripts {
+    <script>
+        async function acknowledge(id, btn) {
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            await fetch('?handler=Acknowledge&id=' + id, {
+                method: 'POST',
+                headers: { 'RequestVerificationToken': token }
+            });
+
+            const cell = btn.closest('td');
+            cell.innerHTML = '<span class="text-muted small">Acknowledged</span>';
+        }
+    </script>
 }
