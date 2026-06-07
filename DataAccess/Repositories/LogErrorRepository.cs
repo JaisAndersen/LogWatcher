@@ -64,7 +64,9 @@ namespace DataAccess.Repositories
         {
             await _context.LogErrors
                 .Where(e => e.Id == id)
-                .ExecuteUpdateAsync(e => e.SetProperty(x => x.Acknowledged, true));
+                .ExecuteUpdateAsync(s => s
+                    .SetProperty(e => e.Acknowledged, true)
+                    .SetProperty(e => e.Updated, DateTime.UtcNow));
         }
     }
 }

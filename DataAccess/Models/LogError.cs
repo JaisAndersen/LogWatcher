@@ -1,4 +1,6 @@
-﻿namespace DataAccess.Models
+﻿using Microsoft.EntityFrameworkCore.Migrations.Operations;
+
+namespace DataAccess.Models
 {
     public class LogError
     {
@@ -10,6 +12,7 @@
         public string? StackTrace { get; set; }
         public bool Acknowledged { get; set; } = false;
         public DateTime OccurredAt { get; set; }
-        public DateTime Created { get; set; }        
+        public DateTime Created { get; set; }   
+        public DateTime? Updated { get; set; }
     }
 }
