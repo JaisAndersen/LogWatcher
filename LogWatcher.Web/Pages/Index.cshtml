@@ -93,6 +93,9 @@
 
 @section Scripts {
     <script>
+        /// <summary>
+        /// Acknowledges a log error.
+        /// </summary>
         async function acknowledge(id, btn) {
             const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
@@ -104,5 +107,102 @@
             const cell = btn.closest('td');
             cell.innerHTML = '<span class="text-muted small">Acknowledged</span>';
         }
+
+        /// <summary>
+        /// Play a simple notification sound using the Web Audio API.
+        /// </summary>
+        function playNotificationSound() {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            oscillator.connect(gain);
+            gain.connect(ctx.destination);
+
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(880, ctx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.3);
+
+            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+            oscillator.start(ctx.currentTime);
+            oscillator.stop(ctx.currentTime + 0.3);
+        }
+
+        /// <summary>
+        /// Polls for new log errors.
+        /// </summary>
+        let knownIds = new Set();
+        let firstPoll = true;
+
+        async function pollForNewErrors() {
+            try {
+                const response = await fetch('?handler=Poll');
+                const data = await response.json();
+
+                if (firstPoll) {
+                    data.items.forEach(e => knownIds.add(e.id));
+                    firstPoll = false;
+                    return;
+                }
+
+                const newErrors = data.items.filter(e => !knownIds.has(e.id));
+
+                if (newErrors.length > 0) {
+                    playNotificationSound();
+
+                    const tbody = document.querySelector('tbody');
+
+                    newErrors.forEach(error => {
+                        knownIds.add(error.id);
+
+                        const row = document.createElement('tr');
+                        row.classList.add('table-warning');
+
+                        const levelBadge = error.level === 'ERROR'
+                            ? `<span class="badge bg-danger">${error.level}</span>`
+                            : `<span class="badge bg-warning text-dark">${error.level}</span>`;
+
+                        const d = new Date(error.occurredAt);
+                        const occurredAt = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+
+                        row.innerHTML = `
+                            <td>${occurredAt}</td>
+                            <td>${levelBadge}</td>
+                            <td>${error.message}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-success"
+                                        onclick="acknowledge('${error.id}', this)">
+                                    Acknowledge
+                                </button>
+                            </td>`;
+
+                        tbody.insertBefore(row, tbody.firstChild);
+
+                        setTimeout(() => row.classList.remove('table-warning'), 5000);
+                    });
+
+                    ///<summary>
+                    /// Updates the error counter.
+                    ///</summary>
+                    const counter = document.querySelector('p.text-muted.small');
+                    if (counter) {
+                        const matches = counter.textContent.match(/\d+/g);
+                        const totalCount = parseInt(matches[1]) + newErrors.length;
+                        const visibleCount = document.querySelectorAll('tbody tr').length;
+                        counter.textContent = `Viser ${visibleCount} af ${totalCount} fejl`;
+                    }
+                }
+            } catch (e) {
+                console.warn('Polling fejlede:', e);
+            }
+        }
+
+        /// <summary>
+        /// Starts polling for new log errors.
+        /// </summary>
+        pollForNewErrors();
+        setInterval(pollForNewErrors, 20000);
     </script>
 }

@@ -24,6 +24,10 @@ namespace LogWatcher.Web.Pages
         [BindProperty(SupportsGet = true)]
         public int CurrentPage { get; set; } = 1;
 
+        /// <summary>
+        /// Handles the initial page load and any subsequent filtering by date range. 
+        /// Validates that the "From" date is not after the "To" date and retrieves the relevant log errors based on the specified criteria.
+        /// </summary>
         public async Task OnGetAsync()
         {
             if (From.HasValue && To.HasValue && From > To)
@@ -40,6 +44,23 @@ namespace LogWatcher.Web.Pages
                 PageSize = 10
             });
         }
+
+        /// <summary>
+        /// Handles AJAX requests to retrieve log errors without a full page reload.
+        /// </summary>
+        public async Task<IActionResult> OnGetPollAsync()
+        {
+            var result = await _repository.GetAsync(new LogErrorQuery
+            {
+                Page = 1,
+                PageSize = 10
+            });
+            return new JsonResult(result);
+        }
+
+        /// <summary>
+        /// Handles AJAX requests to acknowledge a specific log error.
+        /// </summary>
         public async Task<IActionResult> OnPostAcknowledgeAsync(Guid id)
         {
             await _repository.AcknowledgeAsync(id);
