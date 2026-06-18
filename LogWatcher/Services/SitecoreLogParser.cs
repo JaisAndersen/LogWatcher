@@ -1,4 +1,4 @@
-﻿using DataAccess.Models;
+using DataAccess.Models;
 using LogWatcher.Services.Interfaces;
 using System.Text.RegularExpressions;
 
@@ -6,16 +6,28 @@ namespace LogWatcher.Services
 {
     public partial class SitecoreLogParser : ILogParser
     {
-        // Sitecore logs have levels: DEBUG, INFO, WARN, ERROR, FATAL. We only care about errors and above.
+        /// <summary>
+        /// Log levels that are extracted and persisted. Lines with other levels are ignored.
+        /// </summary>
         private static readonly string[] ErrorLevels = new[] { "DEBUG", "WARN", "ERROR", "FATAL" };
-        // Matches: <thread> <HH:mm:ss> <LEVEL>  <message>
+
+        /// <summary>
+        /// Compiled regex for parsing a Sitecore log line into time, level and message groups.
+        /// Optimised at compile time via <see cref="GeneratedRegexAttribute"/>.
+        /// </summary>
         [GeneratedRegex(@"^.+?\s(\d{2}:\d{2}:\d{2})\s(DEBUG|INFO|WARN|ERROR|FATAL)\s{1,2}(.+)$")]
         private static partial Regex EntryPattern();
 
-        // Extracts date from filename: log.20260511.txt → 2026-05-11
+        /// <summary>
+        /// Compiled regex for extracting the date segment from a Sitecore log filename.
+        /// Used as fallback when the log entry itself carries no date.
+        /// </summary>
         [GeneratedRegex(@"\.(\d{4})(\d{2})(\d{2})\.")]
         private static partial Regex FileDatePattern();
 
+        /// <summary>
+        /// Parses raw log lines into a list of LogError entries, filtering to the configured error levels.
+        /// </summary>
         public IReadOnlyList<LogError> Parse(IReadOnlyList<string> lines, Guid logFileId, string filePath)
         {
             var fileDate = ExtractDateFromFilename(filePath);
@@ -39,6 +51,11 @@ namespace LogWatcher.Services
 
             return errors;
         }
+
+        /// <summary>
+        /// Groups raw log lines into structured entries, attaching any following non-matching
+        /// lines as the stack trace of the preceding entry.
+        /// </summary>
         private static List<ParsedEntry> GroupIntoEntries(IReadOnlyList<string> lines, DateOnly fileDate)
         {
             var entries = new List<ParsedEntry>();
@@ -77,6 +94,10 @@ namespace LogWatcher.Services
             FlushCurrent();
             return entries;
         }
+
+        /// <summary>
+        /// Extracts the log date from the filename. Falls back to today's UTC date if no date is found.
+        /// </summary>
         private static DateOnly ExtractDateFromFilename(string filePath)
         {
             var fileName = Path.GetFileName(filePath);

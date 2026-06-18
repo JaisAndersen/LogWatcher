@@ -28,6 +28,10 @@ namespace LogWatcher.Services
                 ?? throw new InvalidOperationException("LogWatcher:TestLogPath is not configured.");
         }
 
+        /// <summary>
+        /// Runs continuously in the background, polling all log files on each interval
+        /// until a cancellation is requested.
+        /// </summary>
         protected override async Task ExecuteAsync(CancellationToken ct)
         {
             while (!ct.IsCancellationRequested)
@@ -37,6 +41,10 @@ namespace LogWatcher.Services
             }
         }
 
+        /// <summary>
+        /// Enumerates all .txt files under the configured log path, reads any new lines
+        /// since the last poll, parses them for errors, and persists results to the database.
+        /// </summary>
         private async Task PollAllLogsAsync(CancellationToken ct)
         {
             string[] files;

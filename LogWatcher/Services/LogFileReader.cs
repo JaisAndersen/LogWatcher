@@ -4,6 +4,11 @@ namespace LogWatcher.Services
 {
     public class LogFileReader : ILogFileReader
     {
+        /// <summary>
+        /// Reads all new lines from a log file starting at the given byte offset.
+        /// Opens the file with read/write sharing to avoid conflicts with active writers.
+        /// Returns the new lines and the updated byte offset for the next read.
+        /// </summary>
         public async Task<(IReadOnlyList<string> Lines, long NewOffset)> ReadNewLinesAsync(string filePath, long fromOffset, CancellationToken cancellationToken = default)
         {
             var lines = new List<string>();

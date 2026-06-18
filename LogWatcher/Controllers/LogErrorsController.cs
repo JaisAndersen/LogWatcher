@@ -15,6 +15,10 @@ namespace LogWatcher.Controllers
             _repository = repository;
         }
 
+        /// <summary>
+        /// Returns a paginated list of log errors, optionally filtered by date range.
+        /// Returns 400 Bad Request if the from date is later than the to date.
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<PagedResult<LogError>>> Get([FromQuery] LogErrorQuery query)
         {
@@ -25,6 +29,10 @@ namespace LogWatcher.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Marks a log error as acknowledged, indicating it has been seen and handled.
+        /// Returns 204 No Content on success.
+        /// </summary>
         [HttpPatch("{id}/acknowledge")]
         public async Task<IActionResult> Acknowledge(Guid id)
         {
