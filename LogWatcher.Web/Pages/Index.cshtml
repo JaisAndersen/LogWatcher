@@ -109,9 +109,23 @@
         }
 
         /// <summary>
+        /// Toggles sound notifications on or off.
+        /// </summary>
+        let soundEnabled = true;
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggle');
+            btn.textContent = soundEnabled ? '🔔 Lyd til' : '🔕 Lyd fra';
+            btn.classList.toggle('btn-outline-secondary', soundEnabled);
+            btn.classList.toggle('btn-outline-danger', !soundEnabled);
+        }
+
+        /// <summary>
         /// Play a simple notification sound using the Web Audio API.
         /// </summary>
         function playNotificationSound() {
+            if (!soundEnabled) return;
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = ctx.createOscillator();
             const gain = ctx.createGain();
